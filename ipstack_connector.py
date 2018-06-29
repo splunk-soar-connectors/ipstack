@@ -1,14 +1,8 @@
 # --
 # File: ipstack_connector.py
 #
-# Copyright (c) Splunk Inc., 2017-2018
-#
-# This unpublished material is proprietary to Splunk.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Splunk Inc.
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 #
 # --
 
@@ -38,10 +32,11 @@ class IpstackConnector(BaseConnector):
 
         self._state = None
 
-        # Variables to hold a base_url and an access_key in case the app makes REST calls
+        # Variables to hold a base_url, use_ssl, and an access_key in case the app makes REST calls
         # Do note that the app json defines the asset config, so please
         # modify this as you deem fit.
         self._base_url = None
+        self._use_ssl = None
         self._access_key = None
 
     @staticmethod
@@ -138,10 +133,8 @@ class IpstackConnector(BaseConnector):
         # Create a URL to connect to
         url = self._base_url + endpoint
 
-        if not params:
-            params = {
-                'access_key': self._access_key
-            }
+        # Populate params with access_key
+        params = {'access_key': self._access_key}
 
         try:
             r = request_func(
@@ -272,8 +265,13 @@ class IpstackConnector(BaseConnector):
         # get the asset config
         config = self.get_config()
 
-        self._base_url = config['base_url'].rstrip('/')
+        self._use_ssl = not not config['use_ssl']
         self._access_key = config['access_key'].strip()
+
+        if self._use_ssl:
+            self._base_url = 'https://api.ipstack.com'
+        else:
+            self._base_url = 'http://api.ipstack.com'
 
         return phantom.APP_SUCCESS
 

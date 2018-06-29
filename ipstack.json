@@ -14,20 +14,20 @@
     "utctime_updated": "2018-06-23T00:28:40.000000Z",
     "package_name": "phantom_ipstack",
     "main_module": "ipstack_connector.pyc",
-    "min_phantom_version": "3.0.251",
+    "min_phantom_version": "3.5.180",
     "app_wizard_version": "1.0.0",
     "configuration": {
-        "base_url": {
-            "description": "Base URL",
-            "data_type": "string",
-            "required": true,
-            "default": "https://api.ipstack.com",
-            "order": 0
-        },
         "access_key": {
             "description": "API Access Key",
             "data_type": "string",
             "required": true,
+            "order": 0
+        },
+        "use_ssl": {
+            "description": "Use SSL encryption (not available with free version)",
+            "data_type": "boolean",
+            "required": true,
+            "default": true,
             "order": 1
         }
     },
