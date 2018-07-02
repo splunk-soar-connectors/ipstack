@@ -1,0 +1,381 @@
+{
+    "appid": "87078d70-ca1e-4dfa-9dbe-cf3fa56b99ae",
+    "name": "ipstack",
+    "description": "Integrates with ipstack to implement investigative actions",
+    "type": "information",
+    "product_vendor": "ipstack",
+    "logo": "logo_ipstack.svg",
+    "logo_dark": "logo_ipstack_dark.svg",
+    "product_name": "ipstack",
+    "product_version_regex": ".*",
+    "publisher": "Splunk",
+    "license": "Copyright (c) Splunk Inc., 2018-2019",
+    "app_version": "1.0.0",
+    "utctime_updated": "2018-06-23T00:28:40.000000Z",
+    "package_name": "phantom_ipstack",
+    "main_module": "ipstack_connector.pyc",
+    "min_phantom_version": "3.5.180",
+    "app_wizard_version": "1.0.0",
+    "configuration": {
+        "access_key": {
+            "description": "API Access Key",
+            "data_type": "string",
+            "required": true,
+            "order": 0
+        },
+        "use_ssl": {
+            "description": "Use SSL encryption (not available with free version)",
+            "data_type": "boolean",
+            "required": true,
+            "default": true,
+            "order": 1
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "verbose": "",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "geolocate ip",
+            "identifier": "geolocate_ip",
+            "description": "Queries Service for IP location info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP to lookup",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 0,
+                    "example_values": [
+                        "216.58.194.174"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.city",
+                    "data_type": "string",
+                    "column_name": "City",
+                    "column_order": 1,
+                    "example_values": [
+                        "Mountain View"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.country_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.country_name",
+                    "data_type": "string",
+                    "column_name": "Country",
+                    "column_order": 3,
+                    "example_values": [
+                        "United States"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.ip",
+                    "data_type": "string",
+                    "example_values": [
+                        "216.58.194.174"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.latitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        37.4192
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.longitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -122.0574
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metro_code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        807
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.region_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "CA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.region_name",
+                    "data_type": "string",
+                    "column_name": "Region",
+                    "column_order": 2,
+                    "example_values": [
+                        "California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.time_zone",
+                    "data_type": "string",
+                    "example_values": [
+                        "America/Los_Angeles"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "94043"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.city",
+                    "data_type": "string",
+                    "example_values": [
+                        "Mountain View"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.country_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "City: Mountain View, Country code: US"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "geolocate domain",
+            "identifier": "geolocate_domain",
+            "description": "Geolocate a domain",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to geolocate",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "domain",
+                        "url"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "url"
+                    ],
+                    "column_name": "domain",
+                    "column_order": 0,
+                    "example_values": [
+                        "https://google.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.city",
+                    "data_type": "string",
+                    "column_name": "City",
+                    "column_order": 1,
+                    "example_values": [
+                        "Mountain View"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.country_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.country_name",
+                    "data_type": "string",
+                    "column_name": "Country",
+                    "column_order": 3,
+                    "example_values": [
+                        "United States"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.ip",
+                    "data_type": "string",
+                    "example_values": [
+                        "172.217.13.78"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.latitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        37.4192
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.longitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -122.0574
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metro_code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        807
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.region_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "CA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.region_name",
+                    "data_type": "string",
+                    "column_name": "Region",
+                    "column_order": 2,
+                    "example_values": [
+                        "California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.time_zone",
+                    "data_type": "string",
+                    "example_values": [
+                        "America/Los_Angeles"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "94043"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.city",
+                    "data_type": "string",
+                    "example_values": [
+                        "Mountain View"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.country_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "City: Mountain View, Country code: US"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        }
+    ]
+}
