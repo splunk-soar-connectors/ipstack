@@ -220,6 +220,12 @@ class IpstackConnector(BaseConnector):
             # so just return from here
             return action_result.get_status()
 
+        # Fail the action if the type of provided input is not getting identified by the IPStack API,
+        # as in that case, provided input is invalid
+        if not response['type']:
+            return action_result.set_status(phantom.APP_SUCCESS,
+            'Provided domain was not found. Please provide a valid domain.')
+
         # Add the response into the data section
         action_result.add_data(response)
 

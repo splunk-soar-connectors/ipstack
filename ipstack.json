@@ -14,12 +14,12 @@
     "utctime_updated": "2018-10-05T22:06:07.000000Z",
     "package_name": "phantom_ipstack",
     "main_module": "ipstack_connector.pyc",
-    "min_phantom_version": "3.5.180",
+    "min_phantom_version": "3.5.210",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "access_key": {
             "description": "API Access Key",
-            "data_type": "string",
+            "data_type": "password",
             "required": true,
             "order": 0
         },
@@ -34,10 +34,10 @@
     "actions": [
         {
             "action": "test connectivity",
-            "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
             "verbose": "",
             "type": "test",
+            "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
             "output": [],
@@ -45,10 +45,10 @@
         },
         {
             "action": "geolocate ip",
-            "identifier": "geolocate_ip",
             "description": "Queries Service for IP location info",
             "verbose": "",
             "type": "investigate",
+            "identifier": "geolocate_ip",
             "read_only": true,
             "parameters": {
                 "ip": {
@@ -57,7 +57,8 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "order": 0
                 }
@@ -67,19 +68,22 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "ip",
                     "column_order": 0,
                     "example_values": [
-                        "216.58.194.174"
+                        "216.58.100.174",
+                        "2405:205:c00b:98f7:9103:6255:bf6:19d5"
                     ]
                 },
                 {
@@ -111,31 +115,35 @@
                     "data_path": "action_result.data.*.ip",
                     "data_type": "string",
                     "example_values": [
-                        "216.58.194.174"
+                        "216.58.100.174",
+                        "2405:205:c00b:98f7:9103:6255:bf6:19d5"
                     ],
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.latitude",
                     "data_type": "numeric",
                     "example_values": [
-                        37.4192
+                        37.4002,
+                        23.0013
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.longitude",
                     "data_type": "numeric",
                     "example_values": [
-                        -122.0574
+                        -122.0004,
+                        72.6007
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.metro_code",
                     "data_type": "numeric",
                     "example_values": [
-                        807
+                        800
                     ]
                 },
                 {
@@ -165,7 +173,7 @@
                     "data_path": "action_result.data.*.zip_code",
                     "data_type": "string",
                     "example_values": [
-                        "94043"
+                        "94003"
                     ]
                 },
                 {
@@ -202,6 +210,108 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip",
+                    "data_type": "string",
+                    "example_values": [
+                        "980000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.continent_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "AS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.continent_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Asia"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ipv6"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.is_eu",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.calling_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "91"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://assets.ipstack.com/flags/in.svg"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji",
+                    "data_type": "string",
+                    "example_values": [
+                        "\ud83c\uddaa\ud83c\uddf3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.code",
+                    "data_type": "string",
+                    "example_values": [
+                        "hi"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.native",
+                    "data_type": "string",
+                    "example_values": [
+                        "\u0939\u000f\u0928\u094d\u0926\u0940"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.geoname_id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1270033
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
+                    "data_type": "string",
+                    "example_values": [
+                        "U+1F1EE U+1F1F3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.capital",
+                    "data_type": "string",
+                    "example_values": [
+                        "Washington D.C."
+                    ]
                 }
             ],
             "render": {
@@ -211,10 +321,10 @@
         },
         {
             "action": "geolocate domain",
-            "identifier": "geolocate_domain",
             "description": "Geolocate a domain",
             "verbose": "",
             "type": "investigate",
+            "identifier": "geolocate_domain",
             "read_only": true,
             "parameters": {
                 "domain": {
@@ -234,7 +344,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -247,7 +358,8 @@
                     "column_name": "domain",
                     "column_order": 0,
                     "example_values": [
-                        "https://google.com"
+                        "https://google.com",
+                        "google.com"
                     ]
                 },
                 {
@@ -279,31 +391,35 @@
                     "data_path": "action_result.data.*.ip",
                     "data_type": "string",
                     "example_values": [
-                        "172.217.13.78"
+                        "172.217.10.78",
+                        "2607:f8a0:4005:80b::200e"
                     ],
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.latitude",
                     "data_type": "numeric",
                     "example_values": [
-                        37.4192
+                        37.4002,
+                        37.001
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.longitude",
                     "data_type": "numeric",
                     "example_values": [
-                        -122.0574
+                        -122.0004,
+                        -97.002
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.metro_code",
                     "data_type": "numeric",
                     "example_values": [
-                        807
+                        800
                     ]
                 },
                 {
@@ -333,7 +449,7 @@
                     "data_path": "action_result.data.*.zip_code",
                     "data_type": "string",
                     "example_values": [
-                        "94043"
+                        "94003"
                     ]
                 },
                 {
@@ -354,7 +470,8 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "City: Mountain View, Country code: US"
+                        "City: Mountain View, Country code: US",
+                        "City: None, Country code: US"
                     ]
                 },
                 {
@@ -369,6 +486,102 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.continent_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "NA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.continent_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "North America"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ipv6"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.is_eu",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.calling_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://assets.ipstack.com/flags/us.svg"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji",
+                    "data_type": "string",
+                    "example_values": [
+                        "\ud83c\uddaa\ud83c\uddf8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.code",
+                    "data_type": "string",
+                    "example_values": [
+                        "en"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.native",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.geoname_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
+                    "data_type": "string",
+                    "example_values": [
+                        "U+1F1FA U+1F1F8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.capital",
+                    "data_type": "string",
+                    "example_values": [
+                        "Washington D.C."
                     ]
                 }
             ],
