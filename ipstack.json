@@ -96,6 +96,20 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.continent_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "AS"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.continent_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Asia"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.country_code",
                     "data_type": "string",
                     "example_values": [
@@ -129,6 +143,80 @@
                     "example_values": [
                         37.4002,
                         23.0013
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.calling_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "91"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.capital",
+                    "data_type": "string",
+                    "example_values": [
+                        "Washington D.C."
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://assets.ipstack.com/flags/in.svg"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji",
+                    "data_type": "string",
+                    "example_values": [
+                        "\ud83c\uddaa\ud83c\uddf3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
+                    "data_type": "string",
+                    "example_values": [
+                        "U+1F1EE U+1F1F3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.geoname_id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1270033
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.is_eu",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.code",
+                    "data_type": "string",
+                    "example_values": [
+                        "hi"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.native",
+                    "data_type": "string",
+                    "example_values": [
+                        "\u0939\u000f\u0928\u094d\u0926\u0940"
                     ]
                 },
                 {
@@ -167,6 +255,20 @@
                     "data_type": "string",
                     "example_values": [
                         "America/Los_Angeles"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ipv6"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip",
+                    "data_type": "string",
+                    "example_values": [
+                        "980000"
                     ]
                 },
                 {
@@ -209,108 +311,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.zip",
-                    "data_type": "string",
-                    "example_values": [
-                        "980000"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.continent_code",
-                    "data_type": "string",
-                    "example_values": [
-                        "AS"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.continent_name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Asia"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "ipv6"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.is_eu",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.calling_code",
-                    "data_type": "string",
-                    "example_values": [
-                        "91"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag",
-                    "data_type": "string",
-                    "example_values": [
-                        "http://assets.ipstack.com/flags/in.svg"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag_emoji",
-                    "data_type": "string",
-                    "example_values": [
-                        "\ud83c\uddaa\ud83c\uddf3"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.code",
-                    "data_type": "string",
-                    "example_values": [
-                        "hi"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "English"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.native",
-                    "data_type": "string",
-                    "example_values": [
-                        "\u0939\u000f\u0928\u094d\u0926\u0940"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.geoname_id",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1270033
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
-                    "data_type": "string",
-                    "example_values": [
-                        "U+1F1EE U+1F1F3"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.capital",
-                    "data_type": "string",
-                    "example_values": [
-                        "Washington D.C."
                     ]
                 }
             ],
@@ -372,6 +372,20 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.continent_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "NA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.continent_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "North America"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.country_code",
                     "data_type": "string",
                     "example_values": [
@@ -405,6 +419,77 @@
                     "example_values": [
                         37.4002,
                         37.001
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.calling_code",
+                    "data_type": "string",
+                    "example_values": [
+                        "1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.capital",
+                    "data_type": "string",
+                    "example_values": [
+                        "Washington D.C."
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://assets.ipstack.com/flags/us.svg"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji",
+                    "data_type": "string",
+                    "example_values": [
+                        "\ud83c\uddaa\ud83c\uddf8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
+                    "data_type": "string",
+                    "example_values": [
+                        "U+1F1FA U+1F1F8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.geoname_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.location.is_eu",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.code",
+                    "data_type": "string",
+                    "example_values": [
+                        "en"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.languages.*.native",
+                    "data_type": "string",
+                    "example_values": [
+                        "English"
                     ]
                 },
                 {
@@ -444,6 +529,17 @@
                     "example_values": [
                         "America/Los_Angeles"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ipv6"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.zip",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.zip_code",
@@ -486,102 +582,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.zip",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.continent_code",
-                    "data_type": "string",
-                    "example_values": [
-                        "NA"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.continent_name",
-                    "data_type": "string",
-                    "example_values": [
-                        "North America"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "ipv6"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.is_eu",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.calling_code",
-                    "data_type": "string",
-                    "example_values": [
-                        "1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag",
-                    "data_type": "string",
-                    "example_values": [
-                        "http://assets.ipstack.com/flags/us.svg"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag_emoji",
-                    "data_type": "string",
-                    "example_values": [
-                        "\ud83c\uddaa\ud83c\uddf8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.code",
-                    "data_type": "string",
-                    "example_values": [
-                        "en"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "English"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.languages.*.native",
-                    "data_type": "string",
-                    "example_values": [
-                        "English"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.geoname_id",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.location.country_flag_emoji_unicode",
-                    "data_type": "string",
-                    "example_values": [
-                        "U+1F1FA U+1F1F8"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.location.capital",
-                    "data_type": "string",
-                    "example_values": [
-                        "Washington D.C."
                     ]
                 }
             ],
