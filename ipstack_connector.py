@@ -17,6 +17,7 @@ from phantom.action_result import ActionResult
 # from ipstack_consts import *
 import requests
 import json
+import ipaddress
 from bs4 import BeautifulSoup
 
 
@@ -122,6 +123,22 @@ class IpstackConnector(BaseConnector):
                 r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+
+    def _is_ip(self, input_ip_address):
+        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+
+        :param input_ip_address: IP address
+        :return: status (success/failure)
+        """
+
+        ip_address_input = input_ip_address
+
+        try:
+            ipaddress.ip_address(unicode(ip_address_input))
+        except:
+            return False
+
+        return True
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
 
@@ -280,6 +297,8 @@ class IpstackConnector(BaseConnector):
             self._base_url = 'https://api.ipstack.com'
         else:
             self._base_url = 'http://api.ipstack.com'
+
+        self.set_validator('ipv6', self._is_ip)
 
         return phantom.APP_SUCCESS
 
