@@ -9,7 +9,7 @@
     "product_name": "ipstack",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) Splunk Inc., 2018",
+    "license": "Copyright (c) 2018 Splunk Inc.",
     "app_version": "1.0.3",
     "utctime_updated": "2018-11-01T18:56:04.000000Z",
     "package_name": "phantom_ipstack",
@@ -27,7 +27,7 @@
             "description": "Use SSL encryption (not available with free version)",
             "data_type": "boolean",
             "required": true,
-            "default": true,
+            "default": false,
             "order": 1
         }
     },
