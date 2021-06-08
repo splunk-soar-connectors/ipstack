@@ -10,13 +10,15 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2021 Splunk Inc.",
-    "app_version": "2.0.0",
-    "utctime_updated": "2018-12-07T01:16:43.000000Z",
+    "app_version": "2.0.1",
+    "utctime_updated": "2021-06-08T14:24:35.000000Z",
     "package_name": "phantom_ipstack",
     "main_module": "ipstack_connector.py",
     "python_version": "3",
     "min_phantom_version": "4.9.39220",
-    "latest_tested_versions": [ "Cloud API api.ipstack.com, June 07,2021"],
+    "latest_tested_versions": [
+        "Cloud API api.ipstack.com, June 07,2021"
+    ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "access_key": {
