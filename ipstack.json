@@ -8,13 +8,17 @@
     "logo_dark": "logo_ipstack_dark.svg",
     "product_name": "ipstack",
     "product_version_regex": ".*",
-    "publisher": "Phantom",
-    "license": "Copyright (c) 2018 Splunk Inc.",
-    "app_version": "1.0.7",
-    "utctime_updated": "2018-12-07T01:16:43.000000Z",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2018-2021 Splunk Inc.",
+    "app_version": "2.0.2",
+    "utctime_updated": "2021-06-08T15:12:58.000000Z",
     "package_name": "phantom_ipstack",
-    "main_module": "ipstack_connector.pyc",
-    "min_phantom_version": "3.5.210",
+    "main_module": "ipstack_connector.py",
+    "python_version": "3",
+    "min_phantom_version": "4.9.39220",
+    "latest_tested_versions": [
+        "Cloud API api.ipstack.com, June 07,2021"
+    ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "access_key": {
@@ -26,7 +30,6 @@
         "use_ssl": {
             "description": "Use SSL encryption (not available with free version)",
             "data_type": "boolean",
-            "required": true,
             "default": false,
             "order": 1
         }
@@ -35,7 +38,6 @@
         {
             "action": "test connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
             "type": "test",
             "identifier": "test_connectivity",
             "read_only": true,
@@ -46,7 +48,6 @@
         {
             "action": "geolocate ip",
             "description": "Queries Service for IP location info",
-            "verbose": "",
             "type": "investigate",
             "identifier": "geolocate_ip",
             "read_only": true,
@@ -79,11 +80,11 @@
                         "ip",
                         "ipv6"
                     ],
-                    "column_name": "ip",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
-                        "216.58.100.174",
-                        "2405:205:c00b:98f7:9103:6255:bf6:19d5"
+                        "192.168.0.10",
+                        "24a6:205:c00b:98f7:9103:6255:bf6:19d5"
                     ]
                 },
                 {
@@ -322,7 +323,6 @@
         {
             "action": "geolocate domain",
             "description": "Geolocate a domain",
-            "verbose": "",
             "type": "investigate",
             "identifier": "geolocate_domain",
             "read_only": true,
@@ -355,11 +355,11 @@
                         "domain",
                         "url"
                     ],
-                    "column_name": "domain",
+                    "column_name": "Domain",
                     "column_order": 0,
                     "example_values": [
-                        "https://google.com",
-                        "google.com"
+                        "https://test.com",
+                        "test.com"
                     ]
                 },
                 {
@@ -405,8 +405,8 @@
                     "data_path": "action_result.data.*.ip",
                     "data_type": "string",
                     "example_values": [
-                        "172.217.10.78",
-                        "2607:f8a0:4005:80b::200e"
+                        "192.168.0.4",
+                        "2607:f8a0:4005:80b::230c"
                     ],
                     "contains": [
                         "ip",
@@ -439,7 +439,7 @@
                     "data_path": "action_result.data.*.location.country_flag",
                     "data_type": "string",
                     "example_values": [
-                        "http://assets.ipstack.com/flags/us.svg"
+                        "http://path.to.api.com/flags/us.svg"
                     ],
                     "contains": [
                         "url"
@@ -461,7 +461,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.location.geoname_id",
-                    "data_type": "string"
+                    "data_type": "numeric",
+                    "example_values": [
+                        2964574
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.location.is_eu",

@@ -1,7 +1,7 @@
 # --
 # File: ipstack_connector.py
 #
-# Copyright (c) 2018 Splunk Inc.
+# Copyright (c) 2018-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -48,7 +48,8 @@ class IpstackConnector(BaseConnector):
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"),
+                      None)
 
     @staticmethod
     def _process_html_response(response, action_result):
@@ -78,7 +79,9 @@ class IpstackConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))), None)
+            return RetVal(
+                action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))),
+                None)
 
         # Please specify the status codes here
         # For ipstack, an error may be returned with status code 200
@@ -89,7 +92,7 @@ class IpstackConnector(BaseConnector):
 
         # You should process the error returned in the json
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+            r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -120,7 +123,7 @@ class IpstackConnector(BaseConnector):
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+            r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -134,11 +137,35 @@ class IpstackConnector(BaseConnector):
         ip_address_input = input_ip_address
 
         try:
-            ipaddress.ip_address(unicode(ip_address_input))
+            ipaddress.ip_address(str(ip_address_input))
         except:
             return False
 
         return True
+
+    def _get_error_message_from_exception(self, e):
+        """ This function is used to get appropriate error message from the exception.
+        :param e: Exception object
+        :return: error message
+        """
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+        error_code = "Error code unavailable"
+        try:
+            if e.args:
+                if len(e.args) > 1:
+                    error_code = e.args[0]
+                    error_msg = e.args[1]
+                elif len(e.args) == 1:
+                    error_code = "Error code unavailable"
+                    error_msg = e.args[0]
+            else:
+                error_code = "Error code unavailable"
+                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+        except:
+            error_code = "Error code unavailable"
+            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+
+        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
 
@@ -157,12 +184,14 @@ class IpstackConnector(BaseConnector):
 
         try:
             r = request_func(
-                            url,
-                            data=data,
-                            headers=headers,
-                            params=params)
+                url,
+                data=data,
+                headers=headers,
+                params=params)
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json)
+            return RetVal(
+                action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))),
+                resp_json)
 
         return self._process_response(r, action_result)
 
@@ -199,7 +228,7 @@ class IpstackConnector(BaseConnector):
             return action_result.get_status()
 
         # Add the response into the data section
-        for key, value in response.iteritems():
+        for key, value in response.items():
             if not value:
                 response[key] = None
         action_result.add_data(response)
@@ -207,15 +236,8 @@ class IpstackConnector(BaseConnector):
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
 
-        try:
-            summary['city'] = response['city']
-        except KeyError:
-            pass
-
-        try:
-            summary['country_code'] = response['country_code']
-        except KeyError:
-            pass
+        summary['city'] = response.get('city')
+        summary['country_code'] = response.get('country_code')
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -241,7 +263,7 @@ class IpstackConnector(BaseConnector):
         # as in that case, provided input is invalid
         if not response['type']:
             return action_result.set_status(phantom.APP_SUCCESS,
-            'Provided domain was not found. Please provide a valid domain.')
+                                            'Provided domain was not found. Please provide a valid domain.')
 
         # Add the response into the data section
         action_result.add_data(response)
@@ -249,15 +271,8 @@ class IpstackConnector(BaseConnector):
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
 
-        try:
-            summary['city'] = response['city']
-        except KeyError:
-            pass
-
-        try:
-            summary['country_code'] = response['country_code']
-        except KeyError:
-            pass
+        summary['city'] = response.get('city')
+        summary['country_code'] = response.get('country_code')
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -329,14 +344,14 @@ if __name__ == '__main__':
     password = args.password
 
     if username is not None and password is None:
-
         # User specified a username but not a password, so ask
         import getpass
+
         password = getpass.getpass("Password: ")
 
     if username and password:
         try:
-            print ("Accessing the Login page")
+            print("Accessing the Login page")
             r = requests.get("https://127.0.0.1/login", verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -349,11 +364,11 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken=' + csrftoken
             headers['Referer'] = 'https://127.0.0.1/login'
 
-            print ("Logging into Platform to get the session id")
+            print("Logging into Platform to get the session id")
             r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platform. Error: " + str(e))
+            print("Unable to get session id from the platform. Error: " + str(e))
             exit(1)
 
     with open(args.input_test_json) as f:
@@ -369,6 +384,6 @@ if __name__ == '__main__':
             connector._set_csrf_info(csrftoken, headers['Referer'])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
