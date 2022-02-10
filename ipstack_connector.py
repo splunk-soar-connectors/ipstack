@@ -196,8 +196,9 @@ class IpstackConnector(BaseConnector):
                 params=params)
         except Exception as e:
             return RetVal(
-                action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))),
-                resp_json)
+                action_result.set_status(phantom.APP_ERROR,
+                    "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))),
+                    resp_json)
 
         return self._process_response(r, action_result)
 
