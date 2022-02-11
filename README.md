@@ -2,7 +2,7 @@
 # ipstack
 
 Publisher: Splunk  
-Connector Version: 2\.0\.2  
+Connector Version: 2\.0\.4  
 Product Vendor: ipstack  
 Product Name: ipstack  
 Product Version Supported (regex): "\.\*"  
