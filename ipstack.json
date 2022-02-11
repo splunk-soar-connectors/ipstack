@@ -9,13 +9,14 @@
     "product_name": "ipstack",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2018-2021 Splunk Inc.",
+    "license": "Copyright (c) 2018-2022 Splunk Inc.",
     "app_version": "2.0.3",
     "utctime_updated": "2022-01-07T22:25:30.000000Z",
     "package_name": "phantom_ipstack",
     "main_module": "ipstack_connector.py",
     "python_version": "3",
     "min_phantom_version": "4.9.39220",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud API api.ipstack.com, June 07,2021"
     ],

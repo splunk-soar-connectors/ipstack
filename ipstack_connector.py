@@ -1,6 +1,6 @@
 # File: ipstack_connector.py
 #
-# Copyright (c) 2018-2021 Splunk Inc.
+# Copyright (c) 2018-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
 #
 #
 # Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
+import ipaddress
+import json
 
+import phantom.app as phantom
 # Usage of the consts file is recommended
 # from ipstack_consts import *
 import requests
-import json
-import ipaddress
 from bs4 import BeautifulSoup
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 
 class RetVal(tuple):
@@ -196,8 +196,9 @@ class IpstackConnector(BaseConnector):
                 params=params)
         except Exception as e:
             return RetVal(
-                action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))),
-                resp_json)
+                action_result.set_status(phantom.APP_ERROR,
+                    "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))),
+                    resp_json)
 
         return self._process_response(r, action_result)
 
@@ -332,8 +333,9 @@ class IpstackConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
