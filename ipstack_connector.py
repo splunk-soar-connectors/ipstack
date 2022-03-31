@@ -17,6 +17,7 @@
 # Phantom App imports
 import ipaddress
 import json
+import sys
 
 import phantom.app as phantom
 # Usage of the consts file is recommended
@@ -226,6 +227,7 @@ class IpstackConnector(BaseConnector):
 
         ip = param['ip']
 
+        self.save_progress("Querying geolocate IP")
         # make rest call
         ret_val, response = self._make_rest_call('/{0}'.format(ip), action_result, params=None, headers=None)
 
@@ -258,6 +260,7 @@ class IpstackConnector(BaseConnector):
         if phantom.is_url(domain):
             domain = phantom.get_host_from_url(domain)
 
+        self.save_progress("Querying geolocate domain")
         # make rest call
         ret_val, response = self._make_rest_call('/{0}'.format(domain), action_result, params=None, headers=None)
 
@@ -377,7 +380,7 @@ if __name__ == '__main__':
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -394,4 +397,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
