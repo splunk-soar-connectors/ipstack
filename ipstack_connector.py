@@ -248,6 +248,7 @@ class IpstackConnector(BaseConnector):
         summary['city'] = response.get('city')
         summary['country_code'] = response.get('country_code')
 
+        self.save_progress("Querying geolocate IP succeeded")
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_geolocate_domain(self, param):
@@ -284,6 +285,7 @@ class IpstackConnector(BaseConnector):
         summary['city'] = response.get('city')
         summary['country_code'] = response.get('country_code')
 
+        self.save_progress("Querying geolocate domain succeeded")
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
