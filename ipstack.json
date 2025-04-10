@@ -175,7 +175,7 @@
                     "data_path": "action_result.data.*.location.country_flag_emoji",
                     "data_type": "string",
                     "example_values": [
-                        "\ud83c\uddaa\ud83c\uddf3"
+                        "🆪🇳"
                     ]
                 },
                 {
@@ -218,7 +218,7 @@
                     "data_path": "action_result.data.*.location.languages.*.native",
                     "data_type": "string",
                     "example_values": [
-                        "\u0939\u000f\u0928\u094d\u0926\u0940"
+                        "ह\u000fन्दी"
                     ]
                 },
                 {
@@ -450,7 +450,7 @@
                     "data_path": "action_result.data.*.location.country_flag_emoji",
                     "data_type": "string",
                     "example_values": [
-                        "\ud83c\uddaa\ud83c\uddf8"
+                        "🆪🇸"
                     ]
                 },
                 {
@@ -594,29 +594,5 @@
             },
             "versions": "EQ(*)"
         }
-    ],
-    "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
-            }
-        ]
-    },
-    "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.5-py3-none-any.whl"
-            }
-        ]
-    }
+    ]
 }
