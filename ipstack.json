@@ -10,8 +10,8 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2025 Splunk Inc.",
-    "app_version": "2.0.6",
-    "utctime_updated": "2022-04-05T19:12:12.000000Z",
+    "app_version": "2.0.7",
+    "utctime_updated": "2025-04-11T18:26:40.853517Z",
     "package_name": "phantom_ipstack",
     "main_module": "ipstack_connector.py",
     "python_version": "3",
@@ -175,7 +175,7 @@
                     "data_path": "action_result.data.*.location.country_flag_emoji",
                     "data_type": "string",
                     "example_values": [
-                        "🆪🇳"
+                        "\ud83c\uddaa\ud83c\uddf3"
                     ]
                 },
                 {
@@ -218,7 +218,7 @@
                     "data_path": "action_result.data.*.location.languages.*.native",
                     "data_type": "string",
                     "example_values": [
-                        "ह\u000fन्दी"
+                        "\u0939\u000f\u0928\u094d\u0926\u0940"
                     ]
                 },
                 {
@@ -450,7 +450,7 @@
                     "data_path": "action_result.data.*.location.country_flag_emoji",
                     "data_type": "string",
                     "example_values": [
-                        "🆪🇸"
+                        "\ud83c\uddaa\ud83c\uddf8"
                     ]
                 },
                 {
