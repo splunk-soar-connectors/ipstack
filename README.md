@@ -1,7 +1,7 @@
 # ipstack
 
 Publisher: Splunk \
-Connector Version: 2.0.8 \
+Connector Version: 2.0.9 \
 Product Vendor: ipstack \
 Product Name: ipstack \
 Minimum Product Version: 5.1.0
