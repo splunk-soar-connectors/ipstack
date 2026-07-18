@@ -1,3 +1,4 @@
 **Unreleased**
 * Remove beautifulsoup4 from requirements.txt
 * Enable SSL encryption by default for credential-bearing requests
+* Prevent access keys in failed request URLs from reaching action results
