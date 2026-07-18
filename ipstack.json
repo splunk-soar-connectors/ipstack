@@ -29,9 +29,9 @@
             "order": 0
         },
         "use_ssl": {
-            "description": "Use SSL encryption (not available with free version)",
+            "description": "Use SSL encryption",
             "data_type": "boolean",
-            "default": false,
+            "default": true,
             "order": 1
         }
     },
