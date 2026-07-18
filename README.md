@@ -1,9 +1,9 @@
 # ipstack
 
-Publisher: Splunk \
-Connector Version: 2.0.9 \
-Product Vendor: ipstack \
-Product Name: ipstack \
+Publisher: Splunk <br>
+Connector Version: 2.0.9 <br>
+Product Vendor: ipstack <br>
+Product Name: ipstack <br>
 Minimum Product Version: 5.1.0
 
 Integrates with ipstack to implement investigative actions
@@ -15,19 +15,19 @@ This table lists the configuration variables required to operate ipstack. These 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **access_key** | required | password | API Access Key |
-**use_ssl** | optional | boolean | Use SSL encryption (not available with free version) |
+**use_ssl** | optional | boolean | Use SSL encryption |
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[geolocate ip](#action-geolocate-ip) - Queries Service for IP location info \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[geolocate ip](#action-geolocate-ip) - Queries Service for IP location info <br>
 [geolocate domain](#action-geolocate-domain) - Geolocate a domain
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -42,7 +42,7 @@ No Output
 
 Queries Service for IP location info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -92,7 +92,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Geolocate a domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -142,7 +142,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
