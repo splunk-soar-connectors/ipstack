@@ -1,6 +1,6 @@
 # File: ipstack_connector.py
 #
-# Copyright (c) 2018-2025 Splunk Inc.
+# Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -185,9 +185,14 @@ class IpstackConnector(BaseConnector):
 
         try:
             r = request_func(url, data=data, headers=headers, params=params)
+        except requests.exceptions.RequestException as e:
+            return RetVal(
+                action_result.set_status(phantom.APP_ERROR, f"Error connecting to ipstack. Details: {type(e).__name__}"),
+                resp_json,
+            )
         except Exception as e:
             return RetVal(
-                action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {self._get_error_message_from_exception(e)}"),
+                action_result.set_status(phantom.APP_ERROR, f"Unexpected connection error. Details: {type(e).__name__}"),
                 resp_json,
             )
 
