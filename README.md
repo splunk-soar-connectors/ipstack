@@ -20,6 +20,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 ### Supported Actions
 
 [test connectivity](#action-test-connectivity) - test connectivity <br>
+[make request](#action-make-request) - Run an ipstack bulk IP lookup and return its raw response. <br>
 [geolocate ip](#action-geolocate-ip) - Queries Service for IP location info <br>
 [geolocate domain](#action-geolocate-domain) - Geolocate a domain
 
@@ -42,6 +43,45 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failure |
 action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'make request'
+
+Run an ipstack bulk IP lookup and return its raw response.
+
+Type: **generic** <br>
+Read only: **False**
+
+'make request' action for the app. Used to handle arbitrary HTTP requests with the app's asset
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**http_method** | optional | Only GET is supported for bulk IP lookups. | string | |
+**endpoint** | required | Two to 50 comma-separated IPv4 or IPv6 addresses. Example: /1.1.1.1,8.8.8.8 | string | |
+**headers** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
+**query_parameters** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
+**body** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
+**timeout** | optional | Timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. | boolean | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.http_method | string | | |
+action_result.parameter.endpoint | string | | |
+action_result.parameter.headers | string | | |
+action_result.parameter.query_parameters | string | | |
+action_result.parameter.body | string | | |
+action_result.parameter.timeout | numeric | | |
+action_result.parameter.verify_ssl | boolean | | |
+action_result.data.\*.status_code | numeric | | 200 404 500 |
+action_result.data.\*.response_body | string | | {"key": "value"} |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -76,7 +116,11 @@ action_result.data.\*.longitude | numeric | | -122.0004 72.6007 |
 action_result.data.\*.metro_code | numeric | | 800 |
 action_result.data.\*.region_code | string | | CA |
 action_result.data.\*.region_name | string | | California |
-action_result.data.\*.time_zone | string | | America/Los_Angeles |
+action_result.data.\*.time_zone.id | string | | America/Los_Angeles |
+action_result.data.\*.time_zone.current_time | string | | 2026-08-19T06:22:04-07:00 |
+action_result.data.\*.time_zone.gmt_offset | numeric | | -25200 |
+action_result.data.\*.time_zone.code | string | | PDT |
+action_result.data.\*.time_zone.is_daylight_saving | boolean | | True False |
 action_result.data.\*.type | string | | ipv6 |
 action_result.data.\*.zip | string | | 980000 |
 action_result.data.\*.zip_code | string | | 94003 |
@@ -106,7 +150,7 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**domain** | required | Domain to geolocate | string | `domain` `url` |
+**domain** | required | A single domain or URL to geolocate; comma-separated values are not supported | string | `domain` `url` |
 
 #### Action Output
 
@@ -126,7 +170,11 @@ action_result.data.\*.longitude | numeric | | -122.0004 72.6007 |
 action_result.data.\*.metro_code | numeric | | 800 |
 action_result.data.\*.region_code | string | | CA |
 action_result.data.\*.region_name | string | | California |
-action_result.data.\*.time_zone | string | | America/Los_Angeles |
+action_result.data.\*.time_zone.id | string | | America/Los_Angeles |
+action_result.data.\*.time_zone.current_time | string | | 2026-08-19T06:22:04-07:00 |
+action_result.data.\*.time_zone.gmt_offset | numeric | | -25200 |
+action_result.data.\*.time_zone.code | string | | PDT |
+action_result.data.\*.time_zone.is_daylight_saving | boolean | | True False |
 action_result.data.\*.type | string | | ipv6 |
 action_result.data.\*.zip | string | | 980000 |
 action_result.data.\*.zip_code | string | | 94003 |

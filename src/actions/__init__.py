@@ -16,9 +16,11 @@ from soar_sdk.app import App
 from ..models import GeoOutput, GeoSummary
 from .geolocate_domain import DomainParams, geolocate_domain
 from .geolocate_ip import IpParams, geolocate_ip
+from .make_request import make_request
 
 
 def register_actions(app: App) -> App:
+    app.make_request()(make_request)
     app.register_action(
         action=geolocate_ip,
         description="Queries Service for IP location info",

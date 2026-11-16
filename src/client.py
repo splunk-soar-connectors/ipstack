@@ -17,18 +17,22 @@ from soar_sdk.exceptions import ActionFailure
 from .asset import Asset
 
 
-def lookup(asset: Asset, endpoint: str) -> dict:
+def get_response(asset: Asset, endpoint: str, *, timeout: int = 30, verify_ssl: bool = True) -> httpx.Response:
     scheme = "https" if asset.use_ssl else "http"
     try:
-        response = httpx.get(
+        return httpx.get(
             f"{scheme}://api.ipstack.com/{endpoint}",
             params={"access_key": asset.access_key.strip()},
-            timeout=30,
+            timeout=timeout,
             follow_redirects=True,
+            verify=verify_ssl,
         )
     except httpx.RequestError as exc:
         raise ActionFailure(f"Error connecting to ipstack. Details: {type(exc).__name__}") from exc
 
+
+def lookup(asset: Asset, endpoint: str) -> dict:
+    response = get_response(asset, endpoint)
     content_type = response.headers.get("Content-Type", "").lower()
     if "json" in content_type:
         try:

@@ -13,6 +13,7 @@
 # limitations under the License.
 from urllib.parse import urlsplit
 
+import pydantic
 from soar_sdk.abstract import SOARClient
 from soar_sdk.params import Param, Params
 
@@ -21,8 +22,32 @@ from ..client import lookup
 from ..models import GeoOutput, GeoSummary
 
 
+field_validator = getattr(pydantic, "field_validator")
+
+
 class DomainParams(Params):
-    domain: str = Param(description="Domain to geolocate", primary=True, cef_types=["domain", "url"], column_name="Domain")
+    domain: str = Param(
+        description="A single domain or URL to geolocate; comma-separated values are not supported",
+        primary=True,
+        cef_types=["domain", "url"],
+        column_name="Domain",
+    )
+
+    @field_validator("domain")
+    @classmethod
+    def validate_domain(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("Domain must be a non-empty domain or URL")
+
+        try:
+            parsed = urlsplit(normalized)
+        except ValueError as exc:
+            raise ValueError("Domain must be a valid domain or URL") from exc
+
+        if "," in normalized and (not parsed.scheme or not parsed.hostname or "," in parsed.hostname):
+            raise ValueError("Domain must contain a single domain or URL")
+        return normalized
 
 
 def geolocate_domain(params: DomainParams, soar: SOARClient, asset: Asset) -> list[GeoOutput]:

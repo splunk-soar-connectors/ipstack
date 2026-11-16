@@ -22,8 +22,10 @@ from soar_sdk.exceptions import ActionFailure
 
 from src.actions.geolocate_domain import DomainParams, geolocate_domain
 from src.actions.geolocate_ip import IpParams, geolocate_ip
+from src.actions.make_request import IpstackMakeRequestParams, make_request
 from src.asset import Asset
 from src.client import lookup
+from src.models import GeoOutput, TimeZoneOutput
 
 
 def asset() -> Asset:
@@ -40,6 +42,7 @@ def test_lookup_sends_key_and_timeout(monkeypatch):
     assert get.call_args.kwargs["params"] == {"access_key": "secret"}
     assert get.call_args.kwargs["timeout"] == 30
     assert get.call_args.kwargs["follow_redirects"] is True
+    assert get.call_args.kwargs["verify"] is True
 
 
 def test_http_200_api_error_is_failure(monkeypatch):
@@ -61,6 +64,12 @@ def test_ip_false_values_become_null(monkeypatch):
 def test_invalid_ip_is_rejected_before_lookup():
     with pytest.raises(ValidationError, match="valid IPv4 or IPv6"):
         IpParams(ip="not-an-ip")
+
+
+@pytest.mark.parametrize("domain", ["", "   ", "example.com,example.org"])
+def test_invalid_domain_values_are_rejected(domain):
+    with pytest.raises(ValidationError, match="Domain"):
+        DomainParams(domain=domain)
 
 
 def test_domain_url_and_missing_domain(monkeypatch):
@@ -88,3 +97,49 @@ def test_domain_success_preserves_api_fields(monkeypatch):
     assert len(results) == 1
     assert results[0].model_dump()["security"] == {"is_proxy": False}
     soar.set_message.assert_called_once_with("City: London, Country code: GB")
+
+
+def test_time_zone_output_preserves_api_object():
+    output = GeoOutput(
+        time_zone={
+            "id": "America/Los_Angeles",
+            "current_time": "2026-08-19T06:22:04-07:00",
+            "gmt_offset": -25200,
+            "code": "PDT",
+            "is_daylight_saving": True,
+        }
+    )
+
+    assert isinstance(output.time_zone, TimeZoneOutput)
+    assert output.time_zone.id == "America/Los_Angeles"
+    assert output.time_zone.gmt_offset == -25200
+
+
+def test_make_request_runs_bulk_lookup(monkeypatch):
+    response = httpx.Response(200, json=[{"ip": "1.1.1.1"}, {"ip": "8.8.8.8"}])
+    get = Mock(return_value=response)
+    monkeypatch.setattr(importlib.import_module("src.actions.make_request"), "get_response", get)
+    configured_asset = asset()
+
+    output = make_request(IpstackMakeRequestParams(endpoint="/1.1.1.1, 8.8.8.8"), configured_asset)
+
+    assert output.status_code == 200
+    assert output.response_body == response.text
+    assert get.call_args.args == (configured_asset, "1.1.1.1,8.8.8.8")
+    assert get.call_args.kwargs == {"timeout": 30, "verify_ssl": True}
+
+
+@pytest.mark.parametrize(
+    ("params", "message"),
+    [
+        (IpstackMakeRequestParams(endpoint="1.1.1.1"), "between 2 and 50"),
+        (IpstackMakeRequestParams(endpoint="1.1.1.1,not-an-ip"), "valid IPv4 or IPv6"),
+        (IpstackMakeRequestParams(endpoint="https://api.ipstack.com/1.1.1.1,8.8.8.8"), "without a base URL"),
+        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", http_method="POST"), "Only GET"),
+        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", headers="{}"), "not supported"),
+        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", timeout=0), "greater than zero"),
+    ],
+)
+def test_make_request_rejects_non_bulk_requests(params, message):
+    with pytest.raises(ActionFailure, match=message):
+        make_request(params, asset())

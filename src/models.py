@@ -31,6 +31,14 @@ class LocationOutput(ActionOutput):
     languages: list[LanguageOutput] | None = None
 
 
+class TimeZoneOutput(ActionOutput):
+    id: str | None = OutputField(example_values=["America/Los_Angeles"])
+    current_time: str | None = OutputField(example_values=["2026-08-19T06:22:04-07:00"])
+    gmt_offset: int | None = OutputField(example_values=[-25200])
+    code: str | None = OutputField(example_values=["PDT"])
+    is_daylight_saving: bool | None = OutputField(example_values=[True, False])
+
+
 class GeoOutput(PermissiveActionOutput):
     city: str | None = OutputField(column_name="City", example_values=["Mountain View"])
     continent_code: str | None = OutputField(example_values=["AS"])
@@ -43,7 +51,7 @@ class GeoOutput(PermissiveActionOutput):
     metro_code: float | None = OutputField(example_values=[800])
     region_code: str | None = OutputField(example_values=["CA"])
     region_name: str | None = OutputField(column_name="Region", example_values=["California"])
-    time_zone: str | None = OutputField(example_values=["America/Los_Angeles"])
+    time_zone: TimeZoneOutput | None = None
     type: str | None = OutputField(example_values=["ipv6"])
     zip: str | None = OutputField(example_values=["980000"])
     zip_code: str | None = OutputField(example_values=["94003"])
