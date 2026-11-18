@@ -19,12 +19,13 @@ import httpx
 import pytest
 from pydantic import ValidationError
 from soar_sdk.exceptions import ActionFailure
+from soar_sdk.params import MakeRequestParams
 
 from src.actions.geolocate_domain import DomainParams, geolocate_domain
 from src.actions.geolocate_ip import IpParams, geolocate_ip
-from src.actions.make_request import IpstackMakeRequestParams, make_request
+from src.actions.make_request import make_request
 from src.asset import Asset
-from src.client import lookup
+from src.client import lookup, send_request
 from src.models import GeoOutput, TimeZoneOutput
 
 
@@ -86,6 +87,38 @@ def test_domain_url_and_missing_domain(monkeypatch):
     soar.set_message.assert_called_once_with("Provided domain was not found. Please provide a valid domain.")
 
 
+def test_domain_missing_type_fails(monkeypatch):
+    monkeypatch.setattr(importlib.import_module("src.actions.geolocate_domain"), "lookup", lambda *args: {})
+    soar = SimpleNamespace(set_summary=Mock(), set_message=Mock())
+
+    with pytest.raises(ActionFailure, match="missing type"):
+        geolocate_domain(DomainParams(domain="example.com"), soar, asset())
+
+
+def test_domain_not_found_clears_summary(monkeypatch):
+    from src.app import create_app
+
+    responses = iter(
+        [
+            {"type": "ipv4", "city": "London", "country_code": "GB"},
+            {"type": None},
+        ]
+    )
+    monkeypatch.setattr(importlib.import_module("src.actions.geolocate_domain"), "lookup", lambda *args: next(responses))
+    app = create_app()
+    action = app.actions_manager.get_action("geolocate_domain")
+    configured_asset = asset()
+
+    assert action(DomainParams(domain="example.com"), asset=configured_asset)
+    assert action(DomainParams(domain="does-not-resolve.invalid"), asset=configured_asset)
+
+    first, second = app.actions_manager.get_results()
+    assert first.get_summary() == {"city": "London", "country_code": "GB"}
+    assert second.get_message() == "Provided domain was not found. Please provide a valid domain."
+    assert second.get_data() == []
+    assert second.get_summary() == {}
+
+
 def test_domain_success_preserves_api_fields(monkeypatch):
     monkeypatch.setattr(
         importlib.import_module("src.actions.geolocate_domain"),
@@ -115,31 +148,83 @@ def test_time_zone_output_preserves_api_object():
     assert output.time_zone.gmt_offset == -25200
 
 
-def test_make_request_runs_bulk_lookup(monkeypatch):
-    response = httpx.Response(200, json=[{"ip": "1.1.1.1"}, {"ip": "8.8.8.8"}])
-    get = Mock(return_value=response)
-    monkeypatch.setattr(importlib.import_module("src.actions.make_request"), "get_response", get)
+@pytest.mark.parametrize("endpoint", ["/8.8.8.8", "/check", "/1.1.1.1,8.8.8.8"])
+def test_make_request_accepts_ipstack_endpoints(monkeypatch, endpoint):
+    response = httpx.Response(200, json={"ip": "8.8.8.8"})
+    request = Mock(return_value=response)
+    monkeypatch.setattr(importlib.import_module("src.actions.make_request"), "send_request", request)
     configured_asset = asset()
 
-    output = make_request(IpstackMakeRequestParams(endpoint="/1.1.1.1, 8.8.8.8"), configured_asset)
+    output = make_request(MakeRequestParams(http_method="GET", endpoint=endpoint), configured_asset)
 
     assert output.status_code == 200
     assert output.response_body == response.text
-    assert get.call_args.args == (configured_asset, "1.1.1.1,8.8.8.8")
-    assert get.call_args.kwargs == {"timeout": 30, "verify_ssl": True}
+    assert request.call_args.args == (configured_asset, "GET", endpoint.lstrip("/"))
+    assert request.call_args.kwargs == {
+        "headers": None,
+        "query_parameters": None,
+        "body": None,
+        "timeout": 30,
+        "verify_ssl": True,
+    }
+
+
+def test_make_request_forwards_generic_parameters(monkeypatch):
+    response = httpx.Response(202, text="accepted")
+    request = Mock(return_value=response)
+    monkeypatch.setattr(importlib.import_module("src.actions.make_request"), "send_request", request)
+    configured_asset = asset()
+
+    output = make_request(
+        MakeRequestParams(
+            http_method="POST",
+            endpoint="/future-endpoint",
+            headers='{"Content-Type": "application/json", "X-Test": "value"}',
+            query_parameters='{"fields": "ip,city"}',
+            body='{"enabled": true}',
+            timeout=12,
+            verify_ssl=False,
+        ),
+        configured_asset,
+    )
+
+    assert output.status_code == 202
+    assert output.response_body == "accepted"
+    request.assert_called_once_with(
+        configured_asset,
+        "POST",
+        "future-endpoint",
+        headers={"Content-Type": "application/json", "X-Test": "value"},
+        query_parameters={"fields": "ip,city"},
+        body={"enabled": True},
+        timeout=12,
+        verify_ssl=False,
+    )
+
+
+def test_send_request_adds_asset_access_key(monkeypatch):
+    response = httpx.Response(200, text="ok")
+    request = Mock(return_value=response)
+    monkeypatch.setattr(httpx, "request", request)
+
+    assert send_request(asset(), "GET", "check", query_parameters=[("fields", "ip,city")]) is response
+    assert request.call_args.args == ("GET", "https://api.ipstack.com/check")
+    assert request.call_args.kwargs["params"] == [("fields", "ip,city"), ("access_key", "secret")]
+    assert request.call_args.kwargs["follow_redirects"] is False
 
 
 @pytest.mark.parametrize(
     ("params", "message"),
     [
-        (IpstackMakeRequestParams(endpoint="1.1.1.1"), "between 2 and 50"),
-        (IpstackMakeRequestParams(endpoint="1.1.1.1,not-an-ip"), "valid IPv4 or IPv6"),
-        (IpstackMakeRequestParams(endpoint="https://api.ipstack.com/1.1.1.1,8.8.8.8"), "without a base URL"),
-        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", http_method="POST"), "Only GET"),
-        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", headers="{}"), "not supported"),
-        (IpstackMakeRequestParams(endpoint="1.1.1.1,8.8.8.8", timeout=0), "greater than zero"),
+        (MakeRequestParams(http_method="GET", endpoint="https://api.ipstack.com/check"), "not a full URL"),
+        (MakeRequestParams(http_method="GET", endpoint="check?fields=ip"), "through query_parameters"),
+        (MakeRequestParams(http_method="GET", endpoint="check", headers='{"Host": "example.com"}'), "cannot be overridden"),
+        (MakeRequestParams(http_method="GET", endpoint="check", query_parameters="access_key=other"), "cannot be overridden"),
+        (MakeRequestParams(http_method="GET", endpoint="check", query_parameters="[]"), "JSON object or query string"),
+        (MakeRequestParams(http_method="GET", endpoint="check", body="not-json"), "Invalid JSON body"),
+        (MakeRequestParams(http_method="GET", endpoint="check", timeout=0), "greater than zero"),
     ],
 )
-def test_make_request_rejects_non_bulk_requests(params, message):
+def test_make_request_rejects_invalid_requests(params, message):
     with pytest.raises(ActionFailure, match=message):
         make_request(params, asset())

@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
 
 import pydantic
 from soar_sdk.abstract import SOARClient
+from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
@@ -57,7 +58,10 @@ def geolocate_domain(params: DomainParams, soar: SOARClient, asset: Asset) -> li
     except ValueError:
         domain = params.domain
     response = lookup(asset, domain)
-    if not response.get("type"):
+    if "type" not in response:
+        raise ActionFailure("Invalid response from ipstack: missing type")
+    if not response["type"]:
+        soar.set_summary(None)
         soar.set_message("Provided domain was not found. Please provide a valid domain.")
         return []
     soar.set_summary(GeoSummary(city=response.get("city"), country_code=response.get("country_code")))

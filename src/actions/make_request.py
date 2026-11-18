@@ -11,67 +11,93 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import ipaddress
+import json
+import re
+from typing import Any
+from urllib.parse import parse_qsl
 
 from soar_sdk.action_results import MakeRequestOutput
 from soar_sdk.exceptions import ActionFailure
-from soar_sdk.params import MakeRequestParams, Param
+from soar_sdk.params import MakeRequestParams
 
 from ..asset import Asset
-from ..client import get_response
+from ..client import send_request
 
 
-MAX_BULK_IPS = 50
+DEFAULT_REQUEST_TIMEOUT_SECONDS = 30
+BLOCKED_HEADERS = {"authorization", "host", "proxy-authorization"}
+URL_SCHEME_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
 
 
-class IpstackMakeRequestParams(MakeRequestParams):
-    http_method: str = Param(
-        description="Only GET is supported for bulk IP lookups.",
-        required=False,
-        default="GET",
-        value_list=["GET"],
-    )
-    endpoint: str = Param(
-        description="Two to 50 comma-separated IPv4 or IPv6 addresses. Example: /1.1.1.1,8.8.8.8",
-        required=True,
-    )
-    headers: str | None = Param(description="Not supported for bulk IP lookup. Leave empty.", required=False)
-    query_parameters: str | None = Param(description="Not supported for bulk IP lookup. Leave empty.", required=False)
-    body: str | None = Param(description="Not supported for bulk IP lookup. Leave empty.", required=False)
-    timeout: int | None = Param(description="Timeout for the request in seconds.", required=False)
-    verify_ssl: bool = Param(description="Whether to verify the SSL certificate.", required=False, default=True)
+def _endpoint(value: str) -> str:
+    endpoint = value.strip()
+    if not endpoint:
+        raise ActionFailure("Endpoint cannot be empty")
+    if URL_SCHEME_PATTERN.match(endpoint) or endpoint.startswith("//"):
+        raise ActionFailure("Invalid endpoint: provide an ipstack API path, not a full URL")
+    if "?" in endpoint or "#" in endpoint:
+        raise ActionFailure("Invalid endpoint: provide query values through query_parameters")
+    return endpoint.lstrip("/")
 
 
-def _bulk_endpoint(endpoint: str) -> str:
-    value = endpoint.strip()
-    if value.startswith(("http://", "https://")):
-        raise ActionFailure("Provide only a comma-separated list of IP addresses, without a base URL.")
-
-    ips = [ip.strip() for ip in value.lstrip("/").split(",")]
-    if not 2 <= len(ips) <= MAX_BULK_IPS or any(not ip for ip in ips):
-        raise ActionFailure(f"Provide between 2 and {MAX_BULK_IPS} comma-separated IP addresses.")
-
+def _headers(value: str | None) -> dict[str, str] | None:
+    if not value:
+        return None
     try:
-        for ip in ips:
-            ipaddress.ip_address(ip)
-    except ValueError as exc:
-        raise ActionFailure("Each bulk lookup value must be a valid IPv4 or IPv6 address.") from exc
-    return ",".join(ips)
+        headers = json.loads(value)
+    except (json.JSONDecodeError, TypeError) as exc:
+        raise ActionFailure("Invalid JSON headers") from exc
+    if not isinstance(headers, dict) or not all(isinstance(key, str) and isinstance(item, str) for key, item in headers.items()):
+        raise ActionFailure("Invalid JSON headers: provide an object containing string values")
+    if any(key.lower() in BLOCKED_HEADERS for key in headers):
+        raise ActionFailure("Authorization, Host, and Proxy-Authorization headers cannot be overridden")
+    return headers
 
 
-def make_request(params: IpstackMakeRequestParams, asset: Asset) -> MakeRequestOutput:
-    """Run an ipstack bulk IP lookup and return its raw response."""
-    if params.http_method != "GET":
-        raise ActionFailure("Only GET is supported for bulk IP lookup.")
-    if params.headers or params.query_parameters or params.body:
-        raise ActionFailure("Headers, query parameters, and body are not supported for bulk IP lookup.")
+def _query_parameters(value: str | None) -> dict[str, Any] | list[tuple[str, str]] | None:
+    if not value:
+        return None
+    try:
+        query_parameters = json.loads(value)
+    except json.JSONDecodeError as exc:
+        if value.lstrip().startswith("{"):
+            raise ActionFailure("Invalid query parameters") from exc
+        query_parameters = parse_qsl(value.lstrip().lstrip("?"), keep_blank_values=True)
+    else:
+        if not isinstance(query_parameters, dict):
+            raise ActionFailure("Invalid query parameters: provide a JSON object or query string")
+
+    keys = query_parameters if isinstance(query_parameters, dict) else (key for key, _ in query_parameters)
+    if any(str(key).lower() == "access_key" for key in keys):
+        raise ActionFailure("The asset access key cannot be overridden")
+    return query_parameters
+
+
+def _body(value: str | None) -> dict[str, Any] | list[Any] | None:
+    if not value:
+        return None
+    try:
+        body = json.loads(value)
+    except (json.JSONDecodeError, TypeError) as exc:
+        raise ActionFailure("Invalid JSON body") from exc
+    if not isinstance(body, dict | list):
+        raise ActionFailure("Invalid JSON body: provide a JSON object or array")
+    return body
+
+
+def make_request(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
+    """Make an authenticated request to an ipstack API endpoint."""
     if params.timeout is not None and params.timeout <= 0:
-        raise ActionFailure("Timeout must be greater than zero.")
+        raise ActionFailure("Timeout must be greater than zero")
 
-    response = get_response(
+    response = send_request(
         asset,
-        _bulk_endpoint(params.endpoint),
-        timeout=params.timeout or 30,
+        params.http_method,
+        _endpoint(params.endpoint),
+        headers=_headers(params.headers),
+        query_parameters=_query_parameters(params.query_parameters),
+        body=_body(params.body),
+        timeout=params.timeout or DEFAULT_REQUEST_TIMEOUT_SECONDS,
         verify_ssl=params.verify_ssl,
     )
     return MakeRequestOutput(status_code=response.status_code, response_body=response.text)

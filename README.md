@@ -20,7 +20,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 ### Supported Actions
 
 [test connectivity](#action-test-connectivity) - test connectivity <br>
-[make request](#action-make-request) - Run an ipstack bulk IP lookup and return its raw response. <br>
+[make request](#action-make-request) - Make an authenticated request to an ipstack API endpoint. <br>
 [geolocate ip](#action-geolocate-ip) - Queries Service for IP location info <br>
 [geolocate domain](#action-geolocate-domain) - Geolocate a domain
 
@@ -48,7 +48,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'make request'
 
-Run an ipstack bulk IP lookup and return its raw response.
+Make an authenticated request to an ipstack API endpoint.
 
 Type: **generic** <br>
 Read only: **False**
@@ -59,13 +59,13 @@ Read only: **False**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**http_method** | optional | Only GET is supported for bulk IP lookups. | string | |
-**endpoint** | required | Two to 50 comma-separated IPv4 or IPv6 addresses. Example: /1.1.1.1,8.8.8.8 | string | |
-**headers** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
-**query_parameters** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
-**body** | optional | Not supported for bulk IP lookup. Leave empty. | string | |
-**timeout** | optional | Timeout for the request in seconds. | numeric | |
-**verify_ssl** | optional | Whether to verify the SSL certificate. | boolean | |
+**http_method** | required | The HTTP method to use for the request. | string | |
+**endpoint** | required | The endpoint to send the request to. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
+**timeout** | optional | The timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default is True. | boolean | |
 
 #### Action Output
 

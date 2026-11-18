@@ -11,10 +11,49 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any
+
 import httpx
 from soar_sdk.exceptions import ActionFailure
 
 from .asset import Asset
+
+
+def send_request(
+    asset: Asset,
+    method: str,
+    endpoint: str,
+    *,
+    headers: dict[str, str] | None = None,
+    query_parameters: dict[str, Any] | list[tuple[str, str]] | None = None,
+    body: dict[str, Any] | list[Any] | None = None,
+    timeout: int = 30,
+    verify_ssl: bool = True,
+) -> httpx.Response:
+    """Send an authenticated request to a relative ipstack API endpoint."""
+    scheme = "https" if asset.use_ssl else "http"
+    if isinstance(query_parameters, dict):
+        request_parameters: dict[str, Any] | list[tuple[str, str]] = {
+            **query_parameters,
+            "access_key": asset.access_key.strip(),
+        }
+    else:
+        request_parameters = [*(query_parameters or []), ("access_key", asset.access_key.strip())]
+
+    request_options: dict[str, Any] = {
+        "headers": headers,
+        "params": request_parameters,
+        "timeout": timeout,
+        "follow_redirects": False,
+        "verify": verify_ssl,
+    }
+    if body is not None:
+        request_options["json"] = body
+
+    try:
+        return httpx.request(method, f"{scheme}://api.ipstack.com/{endpoint}", **request_options)
+    except httpx.RequestError as exc:
+        raise ActionFailure(f"Error connecting to ipstack. Details: {type(exc).__name__}") from exc
 
 
 def get_response(asset: Asset, endpoint: str, *, timeout: int = 30, verify_ssl: bool = True) -> httpx.Response:
